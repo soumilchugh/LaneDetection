@@ -72,33 +72,30 @@ def main():
     with sess.as_default():
         X = tf.placeholder(tf.float32, [None, 360, 640,3], name='input')
         Y = tf.placeholder(tf.float32, [None, 360,640,1])
-        #net = conv2d(X, 16, 3, "Y0") #128
-        #print net.shape
-        net = conv2d(X, 32, 3, "Y1") #128
-        print net.shape
-        net = conv2d(net, 64, 3, "Y2", strides=(2, 2)) #64
-        print net.shape
-        net = conv2d(net, 128, 3, "Y3", strides=(2, 2)) #32
-        print net.shape
-        #net = conv2d(net, 128, 3, "Y4", strides=(2, 2)) #32
-        #print net.shape
-        #net = deconv2d(net, 1, 23,40, 128, 128, "Y4_deconv") # 32
-        #net = tf.nn.relu(net)
-        #print net.shape
-        #net = deconv2d(net, 1, 45,80, 128, 128, "Y3_deconv") # 32
-        #net = tf.nn.relu(net)
-        #print net.shape
-        net = deconv2d(net, 1, 90,160, 64, 128, "Y2_deconv") # 32
-        net = tf.nn.relu(net)
-        print net.shape
-        net = deconv2d(net, 2, 180,320, 32, 64, "Y1_deconv", strides=[1, 2, 2, 1]) # 64
-        net = tf.nn.relu(net)
-        print net.shape
-        net = deconv2d(net, 2, 360,640, 16, 32, "Y0_deconv", strides=[1, 2, 2, 1]) # 128
-        net = tf.nn.relu(net)
-        logits = deconv2d(net, 1, 360,640, 1, 16, "logits_deconv") # 128
-        print logits.shape
-        #loss = -IOU_(logits, Y)
+        net = conv2d(X, 16, 3, "Y0") 
+        net1 = conv2d(net, 32, 3, "Y1",strides=(2, 2))
+        net2 = conv2d(net1, 64, 3, "Y2", strides=(2, 2))
+        net3 = conv2d(net2, 128, 3, "Y3", strides=(2, 2))
+        net4 = conv2d(net3, 256, 3, "Y4", strides=(2, 2))
+        net5 = deconv2d(net4, 1, 45,80, 128, 256, "Y4_deconv")
+        net5 = tf.nn.relu(net5)
+        concat1 = tf.concat([net5,net3],axis = 3)
+        net6 = conv2d(concat1, 128, 3, "Y6")
+        net7 = deconv2d(net6, 1, 90,160, 64, 128, "Y3_deconv")
+        net7 = tf.nn.relu(net7)
+        concat2 = tf.concat([net7,net2],axis = 3)
+        net8 = conv2d(concat2, 64, 3, "Y7")
+        net9 = deconv2d(net8, 2, 180,320, 32, 64, "Y2_deconv", strides=[1, 2, 2, 1]) 
+        net9 = tf.nn.relu(net9)
+        concat3 = tf.concat([net9,net1],axis = 3)
+        net10 = conv2d(concat3, 32, 3, "Y8")
+        net11 = deconv2d(net10, 2, 360,640, 16, 32, "Y0_deconv", strides=[1, 2, 2, 1]) 
+        net11 = tf.nn.relu(net11)
+        concat4 = tf.concat([net11,net],axis = 3)
+        net12 = conv2d(concat4, 16, 3, "Y9")
+        logits = deconv2d(net12, 1, 360,640, 1, 16, "logits_deconv")
+        print (logits.shape)
+        
         loss = tf.losses.sigmoid_cross_entropy(Y, logits)
         totalLoss = loss
         optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(totalLoss)
@@ -132,50 +129,18 @@ def main():
                     img = imread('/home/soumil/darknet/darknet-1/darknet/validation-ground-truth/' +  image)[:,:,:3]
                     img = resize(img, (360, 640), mode='constant', preserve_range=True)
                     images[n] = img
-                    #img = cv2.imread('/home/soumil/darknet/darknet-1/darknet/validation-ground-truth/' + image, 0)
-                    #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                    #graydata = np.reshape(img,-1)
-                    #normalizedImg1 = np.expand_dims(img/255.0, axis=2)
-                    #finaltrainingData.append(normalizedImg1)
                 for n,image in enumerate(val[1]):
                     mask = np.zeros((360, 640, 1), dtype=np.bool)
-                    #img = cv2.imread('/home/soumil/darknet/darknet-1/darknet/validation-ground-truth/' + image, 0)
                     mask_ = imread('/home/soumil/darknet/darknet-1/darknet/validation-ground-truth/' + image)
                     mask_ = np.expand_dims(resize(mask_, (360, 640), mode='constant', preserve_range=True), axis=-1)
                     mask = np.maximum(mask, mask_)
                     labels[n] = mask
-                    #graydata = np.reshape(img,-1)
-                    #newGray = (gray - np.mean(graydata))/np.std(graydata)
-                    #normalizedImg1 = np.expand_dims(img, axis=2)
-                    #finalTraininglabels.append(normalizedImg1)
                 sess.run(optimizer, feed_dict={X:images,Y:labels})
                 trainingLoss = sess.run(totalLoss, feed_dict={X:images,Y:labels})
                 print "Training Loss is " +  str(trainingLoss) + "Step" + str(i)
-            #finalValidationData = list()
-            #finalValidationLabels = list()
-            ##combindedvalidDataset = tf.data.Dataset.zip((valid_dataset, validLabels_dataset)).shuffle(np.array(validLabels).shape[0]).batch(100)
-            #iterator = combindedvalidDataset.make_initializable_iterator()
-            #next_element = iterator.get_next()
-            #sess.run(iterator.initializer)
-            #val = sess.run(next_element)
+
             save_path = saver.save(sess, "/home/soumil/darknet/darknet-1/darknet/model/model.ckpt")
             print("Model saved in path: %s" % save_path)
-            #for image in (val[0]):
-            #    img = cv2.imread('/home/soumil/darknet/darknet-1/darknet/validation-ground-truth/' + image, 3)
-            #    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            #    normalizedImg1 = cv2.normalize(gray,  normalizedImg, -1, 1, cv2.NORM_MINMAX)
-            #    normalizedImg1 = np.expand_dims(normalizedImg1, axis=2)
-            #    finalValidationData.append(normalizedImg1)
-            #for image in (val[1]):
-            #    img = cv2.imread('/home/soumil/darknet/darknet-1/darknet/validation-ground-truth/' + image, 0)
-            #    normalizedImg1 = cv2.normalize(img,  normalizedImg, 0, 1, cv2.NORM_MINMAX)
-            #    normalizedImg1 = np.expand_dims(normalizedImg1, axis=2)
-            #    finalValidationLabels.append(normalizedImg1)
-            #validationLoss = sess.run(totalLoss, feed_dict={X:finalValidationData,Y:finalValidationLabels})
-            #print "Validation Loss" + str(validationLoss)
-            #iterationsList.append(epoch)
-            #validationLossList.append(validationLoss)
-            #trainingLossList.append(trainingLoss)
             
         plt.figure()
         minimum = min(trainingLossList)
