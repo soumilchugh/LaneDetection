@@ -5,16 +5,17 @@ import csv
 import cv2
 import tensorflow as tf
 import numpy as np
+from skimage.io import imread, imshow, imread_collection, concatenate_images
+from skimage.transform import resize
+from skimage.morphology import label
+
 trainData = list();
 trainLabels = list()
 trainingLabels1 = list()
 validData = list()
 validLabels = list()
 validationLabels = list()
-learning_rate = 0.0005
-from skimage.io import imread, imshow, imread_collection, concatenate_images
-from skimage.transform import resize
-from skimage.morphology import label
+
 def loadData():
     with open('/home/soumil/darknet/darknet-1/darknet/ground-truth/data.txt', 'rb') as f:
         trainData = list()
@@ -62,8 +63,10 @@ def deconv2d(input_tensor, filter_size, output_size,output_size1, out_channels, 
     w = tf.get_variable(name=name, shape=filter_shape)
     h1 = tf.nn.conv2d_transpose(input_tensor, w, out_shape, strides, padding='SAME')
     return h1
+
 def normalize(x):
     return (x.astype(float) - 128) / 128
+
 def main():
     trainData, trainLabels = loadValidData()
     validData, validLabels = loadValidData()
@@ -77,11 +80,11 @@ def main():
         net2 = conv2d(net1, 64, 3, "Y2", strides=(2, 2))
         net3 = conv2d(net2, 128, 3, "Y3", strides=(2, 2))
         net4 = conv2d(net3, 256, 3, "Y4", strides=(2, 2))
-        net5 = deconv2d(net4, 1, 45,80, 128, 256, "Y4_deconv")
+        net5 = deconv2d(net4, 1, 45,80, 128, 256, "Y4_deconv",strides=[1, 2, 2, 1])
         net5 = tf.nn.relu(net5)
         concat1 = tf.concat([net5,net3],axis = 3)
         net6 = conv2d(concat1, 128, 3, "Y6")
-        net7 = deconv2d(net6, 1, 90,160, 64, 128, "Y3_deconv")
+        net7 = deconv2d(net6, 1, 90,160, 64, 128, "Y3_deconv",strides=[1, 2, 2, 1])
         net7 = tf.nn.relu(net7)
         concat2 = tf.concat([net7,net2],axis = 3)
         net8 = conv2d(concat2, 64, 3, "Y7")
@@ -94,8 +97,7 @@ def main():
         concat4 = tf.concat([net11,net],axis = 3)
         net12 = conv2d(concat4, 16, 3, "Y9")
         logits = deconv2d(net12, 1, 360,640, 1, 16, "logits_deconv")
-        print (logits.shape)
-        
+        learning_rate = 0.0005
         loss = tf.losses.sigmoid_cross_entropy(Y, logits)
         totalLoss = loss
         optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(totalLoss)
@@ -141,14 +143,7 @@ def main():
 
             save_path = saver.save(sess, "/home/soumil/darknet/darknet-1/darknet/model/model.ckpt")
             print("Model saved in path: %s" % save_path)
-            
-        plt.figure()
-        minimum = min(trainingLossList)
-        print minimum
-        plt.plot(iterationsList, trainingLossList, 'r')
-        plt.plot(iterationsList, validationLossList, 'b')
-        plt.gca().legend(('training Loss','validation Loss'))
-        plt.savefig('_error_' + '.png')
+           
         
 if __name__ == '__main__':
     main()
