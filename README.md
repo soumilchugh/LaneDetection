@@ -40,7 +40,3 @@ The project generates lane labels from raw road images, trains a segmentation mo
 ## Feature Map Visualization
 
 <img src="FeatureVisualisation1.png" height="300" width="200"> <img src="FeatureVisualisation2.png" height="300" width="200"> <img src="FeatureVisualisation3.png" height="300" width="200"> <img src="FeatureVisualisation4.png" height="300" width="200"> <img src="FeatureVisualisation5.png" height="300" width="200"> <img src="FeatureVisualisation6.png" height="300" width="200">
-
-## Portfolio Context
-
-This project is part of Soumil Chugh's computer-vision portfolio, focused on segmentation, visual perception, and model interpretability.
