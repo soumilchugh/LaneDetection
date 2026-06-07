@@ -1,24 +1,46 @@
-# LaneDetection
-# Dataset - BDD100K
-# Usage
-* Generate labels for each of the trained images using Canny edge detector
-* Train a semantic segmentation model on these train images
+# Lane Detection With Semantic Segmentation
 
-# Examples of Raw images
-<img src="https://github.com/soumilchugh/LaneDetection/blob/master/Car1.png" height="300" width="200"> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/Car2.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/Car3.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/Car4.png" height="300" width="200"/>
+This repository explores lane detection using semantic segmentation on BDD100K driving-scene images.
 
-# Examples of Labels for the Segmentation model
-<img src="https://github.com/soumilchugh/LaneDetection/blob/master/Label1.png" height="300" width="200"> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/Label2.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/Label3.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/Label4.png" height="300" width="200"/>
+The project generates lane labels from raw road images, trains a segmentation model, and visualizes predicted lane regions, overlays, and intermediate feature maps.
 
-# Labels superimposed on the original images
-<img src="https://github.com/soumilchugh/LaneDetection/blob/master/LabelonImage1.png" height="300" width="200"> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/LabelonImage2.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/LabelOnImage3.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/LabelOnImage4.png" height="300" width="200"/>
+## Dataset
 
-# Output from the Trained Model
-<img src="https://github.com/soumilchugh/LaneDetection/blob/master/Output1.png" height="300" width="200"> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/Output2.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/Output3.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/Output4.png" height="300" width="200"/>
+- **Dataset**: BDD100K
+- **Task**: Lane-region segmentation from road-scene images
+- **Label generation**: Canny edge detector-based preprocessing for training labels
 
-# Output Superimposed on the images 
-<img src="https://github.com/soumilchugh/LaneDetection/blob/master/FinalOutput1.png" height="300" width="200"> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/FinalOutput2.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/FinalOutput3.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/FinalOutput4.png" height="300" width="200"/>
+## Workflow
 
-# Feature Map Visualisation of some of the layers of the network 
-<img src="https://github.com/soumilchugh/LaneDetection/blob/master/FeatureVisualisation1.png" height="300" width="200"> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/FeatureVisualisation2.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/FeatureVisualisation3.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/FeatureVisualisation4.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/FeatureVisualisation5.png" height="300" width="200"/> <img src="https://github.com/soumilchugh/LaneDetection/blob/master/FeatureVisualisation6.png" height="300" width="200"/>
+1. Generate lane labels for training images.
+2. Train a semantic-segmentation model on the labeled image set.
+3. Evaluate the trained model on road-scene examples.
+4. Visualize raw inputs, generated labels, model outputs, overlays, and feature maps.
 
+## Raw Images
+
+<img src="Car1.png" height="300" width="200"> <img src="Car2.png" height="300" width="200"> <img src="Car3.png" height="300" width="200"> <img src="Car4.png" height="300" width="200">
+
+## Generated Labels
+
+<img src="Label1.png" height="300" width="200"> <img src="Label2.png" height="300" width="200"> <img src="Label3.png" height="300" width="200"> <img src="Label4.png" height="300" width="200">
+
+## Labels Overlaid On Images
+
+<img src="LabelonImage1.png" height="300" width="200"> <img src="LabelonImage2.png" height="300" width="200"> <img src="LabelOnImage3.png" height="300" width="200"> <img src="LabelOnImage4.png" height="300" width="200">
+
+## Model Outputs
+
+<img src="Output1.png" height="300" width="200"> <img src="Output2.png" height="300" width="200"> <img src="Output3.png" height="300" width="200"> <img src="Output4.png" height="300" width="200">
+
+## Final Output Overlays
+
+<img src="FinalOutput1.png" height="300" width="200"> <img src="FinalOutput2.png" height="300" width="200"> <img src="FinalOutput3.png" height="300" width="200"> <img src="FinalOutput4.png" height="300" width="200">
+
+## Feature Map Visualization
+
+<img src="FeatureVisualisation1.png" height="300" width="200"> <img src="FeatureVisualisation2.png" height="300" width="200"> <img src="FeatureVisualisation3.png" height="300" width="200"> <img src="FeatureVisualisation4.png" height="300" width="200"> <img src="FeatureVisualisation5.png" height="300" width="200"> <img src="FeatureVisualisation6.png" height="300" width="200">
+
+## Portfolio Context
+
+This project is part of Soumil Chugh's computer-vision portfolio, focused on segmentation, visual perception, and model interpretability.
